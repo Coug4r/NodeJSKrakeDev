@@ -1,0 +1,75 @@
+import { useEffect, useState } from "react";
+import { useAuth } from "../context/AuthContext";
+import { API_BASE_URL } from "../config/apiConfig";
+
+function ListarVehiculos({ vehiculos }) {
+  const [fotosUrl, setFotosUrl] = useState({});
+  const { token } = useAuth();
+
+  useEffect(() => {
+    const urlsCreadas = [];
+
+    const descargarFotos = async () => {
+      for (const vehiculo of vehiculos) {
+        try {
+          const res = await fetch(`${API_BASE_URL}/auth/vehiculo/${vehiculo.id}/foto`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          if (res.ok) {
+            const blob = await res.blob();
+            const urlLocal = URL.createObjectURL(blob);
+            urlsCreadas.push(urlLocal);
+
+            setFotosUrl((prev) => ({
+              ...prev,
+              [vehiculo.id]: urlLocal,
+            }));
+          }
+        } catch (error) {
+          console.log("Fallo al descargar la foto", error);
+        }
+      }
+    };
+
+    if (vehiculos.length > 0) {
+      descargarFotos();
+    }
+
+    return () => {
+      for (const url of urlsCreadas) {
+        URL.revokeObjectURL(url);
+      }
+    };
+  }, [vehiculos, token]);
+
+  return (
+    <div>
+      <h2>Vehículos Registrados</h2>
+      {vehiculos.length === 0 ? (
+        <p>No hay vehículos registrados</p>
+      ) : (
+        <ul>
+          {vehiculos.map((v) => (
+            <li key={v.id}>
+              <p>Marca: {v.marca}</p>
+              <p>Modelo: {v.modelo}</p>
+              <p>Tipo: {v.mimeType}</p>
+              {fotosUrl[v.id] && (
+                <img
+                  src={fotosUrl[v.id]}
+                  alt="Foto del vehículo"
+                  width="150"
+                />
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
+export default ListarVehiculos;
