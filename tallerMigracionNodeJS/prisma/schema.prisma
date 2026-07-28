@@ -1,0 +1,25 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+
+datasource db {
+  provider = "postgresql"
+}
+
+model peliculas {
+  id        Int     @id @default(autoincrement())
+  anio      Int?
+  director  String? @db.VarChar(255)
+  mime_type String? @db.VarChar(255)
+  poster    Bytes?
+  titulo    String? @db.VarChar(255)
+}
+
+model usuarios {
+  id       Int     @id @default(autoincrement())
+  password String  @db.VarChar(100)
+  rol      String? @db.VarChar(20)
+  username String  @unique(map: "ukm2dvbwfge291euvmk6vkkocao") @db.VarChar(50)
+}
