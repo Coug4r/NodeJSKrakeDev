@@ -20,12 +20,15 @@ export const obtenerVehiculos = async (req: Request, res: Response) => {
 export const registrarVehiculo = async (req: Request, res: Response) => {
   const { marca, modelo } = req.body;
   const archivo = req.file;
-
+  const rolUsuario = (req as any).usuario.rol;
   if (!archivo) {
     res.status(400).json({ Error: "Debe seleccionar una imagen!" });
     return;
   }
-
+  if(archivo.mimetype != "image/png" && archivo.mimetype != "image/jpeg" ){
+    res.status(400).json({ error: "Solo se permiten imágenes JPG o PNG" });
+  }
+  if(rolUsuario == "ADMIN"){
   try {
     const nuevoVehiculo = await prisma.vehiculos.create({
       data: {
@@ -38,6 +41,9 @@ export const registrarVehiculo = async (req: Request, res: Response) => {
     res.status(201).json(nuevoVehiculo);
   } catch (error) {
     res.status(500).json({ Error: "Error al registrar el vehículo!" });
+  }
+  }else{
+    res.status(403).json({Error: "No tienes permiso de administrador!"})
   }
 };
 

@@ -12,7 +12,7 @@ function ListarVehiculos({ vehiculos }) {
     const descargarFotos = async () => {
       for (const vehiculo of vehiculos) {
         try {
-          const res = await fetch(`${API_BASE_URL}/auth/vehiculo/${vehiculo.id}/foto`, {
+          const res = await fetch(`${API_BASE_URL}/auth/vehiculos/${vehiculo.id}/foto`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },

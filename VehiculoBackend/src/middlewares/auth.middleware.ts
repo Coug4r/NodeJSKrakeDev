@@ -14,7 +14,7 @@ export const validarAuth = (req: CustomeRequest, res: Response, next: NextFuncti
         return;
     }
     try{
-        const verificado = jwt.verify(token, process.env.JWT_SECRET || "secretos");
+        const verificado = jwt.verify(token, process.env.JWT_SECRET || "secreto");
         req.usuario = verificado;
         next();
     }catch(error){
